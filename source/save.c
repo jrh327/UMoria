@@ -35,6 +35,11 @@
 #include "constant.h"
 #include "types.h"
 
+#ifdef MACOSX
+#include <unistd.h>
+#include <sys/stat.h>
+#endif
+
 #ifndef USG
 /* stuff only needed for Berkeley UNIX */
 #include <sys/types.h>

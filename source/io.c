@@ -129,11 +129,11 @@ typedef struct { int stuff; } fpvmach;
 
 #include <stdlib.h>
 
-#ifdef DEBIAN_LINUX
+#if defined(DEBIAN_LINUX) || defined(MACOSX)
 #include <termios.h>
 #endif
 
-#if defined(unix) || defined(__linux__) || defined(DEBIAN_LINUX) || defined(__CYGWIN__)
+#if defined(unix) || defined(__linux__) || defined(DEBIAN_LINUX) || defined(__CYGWIN__) || defined(MACOSX)
 #include <unistd.h> /* prototype for execl */ 
 #endif
 
@@ -165,7 +165,9 @@ static Ioctl(i, l, p) long l; char *p; { return 0; }
 /*VARARGS2*/
 static Ioctl(i, l, p) char *p; { return 0; }
 #endif
+#ifndef MACOSX
 #define ioctl	    Ioctl
+#endif
 #endif
 
 #if !defined(USG) && defined(lint)
@@ -249,7 +251,11 @@ static WINDOW *tempscr;		/* Spare window for VMS CTRL('R'). */
    Handle the stop and start signals. This ensures that the log
    is up to date, and that the terminal is fully reset and
    restored.  */
+#ifdef MACOSX
+void suspend(int sig)
+#else
 int suspend()
+#endif
 {
 #ifdef USG
   /* for USG systems with BSDisms that have SIGTSTP defined, but don't
@@ -280,7 +286,9 @@ int suspend()
   (void) wrefresh(curscr);
   py.misc.male &= ~2;
 #endif
+#ifndef MACOSX
   return 0;
+#endif
 }
 #endif
 #endif
@@ -321,7 +329,11 @@ void init_curses()
 #else
 #if !defined(VMS) && !defined(MSDOS) && !defined(ATARI_ST)
 #ifndef AMIGA
+#ifdef MACOSX
+  (void) tcgetattr(0, &save_termio);
+#else
   (void) ioctl(0, TCGETA, (char *)&save_termio);
+#endif
 #endif
 #endif
 #endif
@@ -440,7 +452,11 @@ void moriaterm()
 #else
 #if !defined(ATARI_ST) && !defined(VMS)
 #ifdef USG
+#ifdef MACOSX
+  (void) tcgetattr(0, &tbuf);
+#else
   (void) ioctl(0, TCGETA, (char *)&tbuf);
+#endif
   /* disable all of the normal special control characters */
   tbuf.c_cc[VINTR] = (char)3; /* control-C */
   tbuf.c_cc[VQUIT] = (char)-1;
@@ -458,7 +474,11 @@ void moriaterm()
   tbuf.c_cc[VMIN] = 1;  /* Input should wait for at least 1 char */
   tbuf.c_cc[VTIME] = 0; /* no matter how long that takes. */
 
+#ifdef MACOSX
+  (void) tcsetattr(0, TCSANOW, &tbuf);
+#else
   (void) ioctl(0, TCSETA, (char *)&tbuf);
+#endif
 #else
   /* disable all of the special characters except the suspend char, interrupt
      char, and the control flow start/stop characters */
@@ -577,7 +597,11 @@ void restore_term()
 #ifdef USG
 #if !defined(MSDOS) && !defined(ATARI_ST) && !defined(VMS)
 #ifndef AMIGA
+#ifdef MACOSX
+  (void) tcsetattr(0, TCSANOW, &save_termio);
+#else
   (void) ioctl(0, TCSETA, (char *)&save_termio);
+#endif
 #endif
 #endif
 #else
@@ -708,7 +732,11 @@ void shell_out()
 
 #ifdef USG
 #if !defined(MSDOS) && !defined(ATARI_ST) && !defined(AMIGA)
+#ifdef MACOSX
+  (void) tcgetattr(0, &tbuf);
+#else
   (void) ioctl(0, TCGETA, (char *)&tbuf);
+#endif
 #endif
 #else
   (void) ioctl(0, TIOCGETP, (char *)&tbuf);
@@ -750,7 +778,11 @@ void shell_out()
       default_signals();
 #ifdef USG
 #if !defined(MSDOS) && !defined(ATARI_ST) && !defined(AMIGA)
+#ifdef MACOSX
+      (void) tcsetattr(0, TCSANOW, &save_termio);
+#else
       (void) ioctl(0, TCSETA, (char *)&save_termio);
+#endif
 #endif
 #else
       (void) ioctl(0, TIOCSLTC, (char *)&save_special_chars);
@@ -810,7 +842,11 @@ void shell_out()
   /* have to disable ^Y for tunneling */
 #ifdef USG
 #if !defined(MSDOS) && !defined(ATARI_ST)
+#ifdef MACOSX
+  (void) tcsetattr(0, TCSANOW, &tbuf);
+#else
   (void) ioctl(0, TCSETA, (char *)&tbuf);
+#endif
 #endif
 #else
   (void) ioctl(0, TIOCSLTC, (char *)&lcbuf);

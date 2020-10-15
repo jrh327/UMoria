@@ -73,6 +73,10 @@
 #include "types.h"
 #include "externs.h"
 
+#ifdef MACOSX
+#include <unistd.h>
+#endif
+
 #ifndef USG
 #include <sys/types.h>
 #include <sys/param.h>
@@ -291,7 +295,7 @@ char *argv[];
 #endif
       }
 
-#ifndef MAC
+#if !defined(MAC) && !defined(MACOSX)
   /* Check operating hours			*/
   /* If not wizard  No_Control_Y	       */
   read_times();

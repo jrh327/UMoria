@@ -28,6 +28,10 @@
 #include "config.h"
 #include "constant.h"
 
+#ifdef MACOSX
+#include <unistd.h>
+#endif
+
 /* Signals have no significance on the Mac */
 
 #ifdef MAC

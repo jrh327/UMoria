@@ -57,6 +57,15 @@ some of the system defines set up here.
 /* If you are compiling on a SYS V version of UNIX, define this.  */
 /* #define SYS_V */
 
+/* If you are compiling on Mac OS X, define this. */
+/* #define MACOSX */
+
+#ifdef MACOSX
+#define SYS_V
+#define __CYGWIN__
+#define unix
+#endif
+
 /* If you are compiling on a SYS III version of UNIX, define this.
    The SYS_III support may not be complete.  I do not know if this works.  */
 /* #define SYS_III */

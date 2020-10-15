@@ -848,7 +848,11 @@ void ident_char();
 
 /* io.c */
 #ifdef SIGTSTP
+#ifdef MACOSX
+void suspend();
+#else
 int suspend();
+#endif
 #endif
 void init_curses();
 void moriaterm();

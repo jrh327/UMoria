@@ -57,6 +57,11 @@ void exit();
 #include <stdlib.h>
 #endif
 
+#ifdef MACOSX
+#include <stdlib.h>
+#include <unistd.h>
+#endif
+
 #ifdef MAC
 #include "ScrnMgr.h"
 #define GNRL_ALRT	1024
