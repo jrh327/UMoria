@@ -272,10 +272,18 @@ int store_num, start;
 	  value = value * chr_adj() / 100;
 	  if (value <= 0)
 	    value = 1;
+#ifdef MACOSX
+	  (void) sprintf(out_val2, "%9d", value);
+#else
 	  (void) sprintf(out_val2, "%9ld", value);
+#endif
 	}
       else
+#ifdef MACOSX
+	(void) sprintf(out_val2,"%9d [Fixed]", x);
+#else
 	(void) sprintf(out_val2,"%9ld [Fixed]", x);
+#endif
       prt(out_val2, i+5, 59);
       i++;
       start++;
@@ -305,10 +313,18 @@ int store_num, pos;
     {
       j = - s_ptr->store_inven[pos].scost;
       j = j * chr_adj() / 100;
+#ifdef MACOSX
+      (void) sprintf(out_val, "%d", j);
+#else
       (void) sprintf(out_val, "%ld", j);
+#endif
     }
   else
+#ifdef MACOSX
+    (void) sprintf(out_val, "%9d [Fixed]", s_ptr->store_inven[pos].scost);
+#else
     (void) sprintf(out_val, "%9ld [Fixed]", s_ptr->store_inven[pos].scost);
+#endif
   prt(out_val, i+5, 59);
 }
 
@@ -318,7 +334,11 @@ static void store_prt_gold()
 {
   vtype out_val;
 
+#ifdef MACOSX
+  (void) sprintf(out_val, "Gold Remaining : %d", py.misc.au);
+#else
   (void) sprintf(out_val, "Gold Remaining : %ld", py.misc.au);
+#endif
   prt(out_val, 18, 17);
 }
 
@@ -601,7 +621,11 @@ inven_type *item;
       do
 	{
 	  loop_flag = TRUE;
+#ifdef MACOSX
+	  (void) sprintf(out_val, "%s :  %d", comment, cur_ask);
+#else
 	  (void) sprintf(out_val, "%s :  %ld", comment, cur_ask);
+#endif
 	  put_buffer(out_val, 1, 0);
 	  purchase = receive_offer(store_num, "What do you offer? ",
 				   &new_offer, last_offer, num_offer, 1);
@@ -677,7 +701,11 @@ inven_type *item;
 	      last_offer = new_offer;
 	      num_offer++; /* enable incremental haggling */
 	      erase_line (1, 0);
+#ifdef MACOSX
+	      (void) sprintf(out_val, "Your last offer : %d", last_offer);
+#else
 	      (void) sprintf(out_val, "Your last offer : %ld", last_offer);
+#endif
 	      put_buffer(out_val, 1, 39);
 	      prt_comment2(last_offer, cur_ask, final_flag);
 
@@ -794,7 +822,11 @@ the price.");
 	  do
 	    {
 	      loop_flag = TRUE;
+#ifdef MACOSX
+	      (void) sprintf(out_val, "%s :  %d", comment, cur_ask);
+#else
 	      (void) sprintf(out_val, "%s :  %ld", comment, cur_ask);
+#endif
 	      put_buffer(out_val, 1, 0);
 	      sell = receive_offer(store_num, "What price do you ask? ",
 				 &new_offer, last_offer, num_offer, -1);
@@ -870,7 +902,11 @@ the price.");
 		  last_offer = new_offer;
 		  num_offer++; /* enable incremental haggling */
 		  erase_line (1, 0);
+#ifdef MACOSX
+		  (void) sprintf(out_val, "Your last bid %d", last_offer);
+#else
 		  (void) sprintf(out_val, "Your last bid %ld", last_offer);
+#endif
 		  put_buffer(out_val, 1, 39);
 		  prt_comment3(cur_ask, last_offer, final_flag);
 

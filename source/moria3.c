@@ -320,7 +320,11 @@ int pickup;
 	  py.misc.au += i_ptr->cost;
 	  objdes(tmp_str, i_ptr, TRUE);
 	  (void) sprintf(out_val,
+#ifdef MACOSX
+			 "You have found %d gold pieces worth of %s",
+#else
 			 "You have found %ld gold pieces worth of %s",
+#endif
 			 i_ptr->cost, tmp_str);
 	  prt_gold();
 	  (void) delete_object(y, x);

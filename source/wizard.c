@@ -187,7 +187,11 @@ void change_character()
   else
     return;
 
+#ifdef MACOSX
+  (void) sprintf(tmp_str, "Current=%d  Gold = ", m_ptr->au);
+#else
   (void) sprintf(tmp_str, "Current=%ld  Gold = ", m_ptr->au);
+#endif
   tmp_val = strlen(tmp_str);
   prt(tmp_str, 0, 0);
   if (get_string(tmp_str, 0, tmp_val, 7))
