@@ -165,22 +165,26 @@ int detect_trap()
 
   detect = FALSE;
   for (i = panel_row_min; i <= panel_row_max; i++)
-    for (j = panel_col_min; j <= panel_col_max; j++)
-      {
-	c_ptr = &cave[i][j];
-	if (c_ptr->tptr != 0)
-	  if (t_list[c_ptr->tptr].tval == TV_INVIS_TRAP)
+    {
+      for (j = panel_col_min; j <= panel_col_max; j++)
+	{
+	  c_ptr = &cave[i][j];
+	  if (c_ptr->tptr != 0)
 	    {
-	      c_ptr->fm = TRUE;
-	      change_trap(i, j);
-	      detect = TRUE;
+	      if (t_list[c_ptr->tptr].tval == TV_INVIS_TRAP)
+		{
+		  c_ptr->fm = TRUE;
+		  change_trap(i, j);
+		  detect = TRUE;
+		}
+	      else if (t_list[c_ptr->tptr].tval == TV_CHEST)
+		{
+		  t_ptr = &t_list[c_ptr->tptr];
+		  known2(t_ptr);
+		}
 	    }
-	  else if (t_list[c_ptr->tptr].tval == TV_CHEST)
-	    {
-	      t_ptr = &t_list[c_ptr->tptr];
-	      known2(t_ptr);
-	    }
-      }
+	}
+    }
   return(detect);
 }
 
@@ -193,27 +197,31 @@ int detect_sdoor()
 
   detect = FALSE;
   for (i = panel_row_min; i <= panel_row_max; i++)
-    for (j = panel_col_min; j <= panel_col_max; j++)
-      {
-	c_ptr = &cave[i][j];
-	if (c_ptr->tptr != 0)
-	  /* Secret doors  */
-	  if (t_list[c_ptr->tptr].tval == TV_SECRET_DOOR)
+    {
+      for (j = panel_col_min; j <= panel_col_max; j++)
+	{
+	  c_ptr = &cave[i][j];
+	  if (c_ptr->tptr != 0)
 	    {
-	      c_ptr->fm = TRUE;
-	      change_trap(i, j);
-	      detect = TRUE;
+	      /* Secret doors  */
+	      if (t_list[c_ptr->tptr].tval == TV_SECRET_DOOR)
+		{
+		  c_ptr->fm = TRUE;
+		  change_trap(i, j);
+		  detect = TRUE;
+		}
+	    /* Staircases	 */
+	      else if (((t_list[c_ptr->tptr].tval == TV_UP_STAIR) ||
+		        (t_list[c_ptr->tptr].tval == TV_DOWN_STAIR)) &&
+		       !c_ptr->fm)
+		{
+		  c_ptr->fm = TRUE;
+		  lite_spot(i, j);
+		  detect = TRUE;
+		}
 	    }
-	/* Staircases	 */
-	  else if (((t_list[c_ptr->tptr].tval == TV_UP_STAIR) ||
-		    (t_list[c_ptr->tptr].tval == TV_DOWN_STAIR)) &&
-		   !c_ptr->fm)
-	    {
-	      c_ptr->fm = TRUE;
-	      lite_spot(i, j);
-	      detect = TRUE;
-	    }
-      }
+	}
+    }
   return(detect);
 }
 
@@ -1818,29 +1826,33 @@ int genocide()
 
   killed = FALSE;
   if (get_com("Which type of creature do you wish exterminated?", &typ))
-    for (i = mfptr - 1; i >= MIN_MONIX; i--)
-      {
-	m_ptr = &m_list[i];
-	r_ptr = &c_list[m_ptr->mptr];
-	if (typ == c_list[m_ptr->mptr].cchar)
+    {
+      for (i = mfptr - 1; i >= MIN_MONIX; i--)
+	{
+	  m_ptr = &m_list[i];
+	  r_ptr = &c_list[m_ptr->mptr];
+	  if (typ == c_list[m_ptr->mptr].cchar)
+	    {
 #ifdef ATARIST_MWC
-	  if ((r_ptr->cmove & (holder = CM_WIN)) == 0)
+	      if ((r_ptr->cmove & (holder = CM_WIN)) == 0)
 #else
-	  if ((r_ptr->cmove & CM_WIN) == 0)
+	      if ((r_ptr->cmove & CM_WIN) == 0)
 #endif
-	    {
-	      delete_monster(i);
-	      killed = TRUE;
+		{
+		  delete_monster(i);
+		  killed = TRUE;
+		}
+	      else
+		{
+		  /* genocide is a powerful spell, so we will let the player
+		     know the names of the creatures he did not destroy,
+		     this message makes no sense otherwise */
+		  (void) sprintf(out_val, "The %s is unaffected.", r_ptr->name);
+		  msg_print(out_val);
+		}
 	    }
-	  else
-	    {
-	      /* genocide is a powerful spell, so we will let the player
-		 know the names of the creatures he did not destroy,
-		 this message makes no sense otherwise */
-	      (void) sprintf(out_val, "The %s is unaffected.", r_ptr->name);
-	      msg_print(out_val);
-	    }
-      }
+	}
+    }
   return(killed);
 }
 

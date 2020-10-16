@@ -141,24 +141,26 @@ void dungeon()
       /* The Mac ignores the game hours file		*/
       /* Check for game hours			       */
       if (((turn % 250) == 1) && !check_time())
-	if (closing_flag > 4)
-	  {
-	    msg_print("The gates to Moria are now closed.");
-	    (void) strcpy (died_from, "(closing gate: saved)");
-	    if (!save_char())
-	      {
-		(void) strcpy (died_from, "a slammed gate");
-		death = TRUE;
-	      }
-	    exit_game();
-	  }
-	else
-	  {
-	    disturb (0, 0);
-	    closing_flag++;
-	    msg_print("The gates to Moria are closing.");
-	    msg_print("Please finish up or save your game.");
-	  }
+	{
+	  if (closing_flag > 4)
+	    {
+	      msg_print("The gates to Moria are now closed.");
+	      (void) strcpy (died_from, "(closing gate: saved)");
+	      if (!save_char())
+		{
+		  (void) strcpy (died_from, "a slammed gate");
+		  death = TRUE;
+		}
+	      exit_game();
+	    }
+	  else
+	    {
+	      disturb (0, 0);
+	      closing_flag++;
+	      msg_print("The gates to Moria are closing.");
+	      msg_print("Please finish up or save your game.");
+	    }
+	}
 #endif
 
       /* turn over the store contents every, say, 1000 turns */
@@ -702,24 +704,28 @@ void dungeon()
 	}
 	/* Word-of-Recall  Note: Word-of-Recall is a delayed action	 */
       if (f_ptr->word_recall > 0)
-	if (f_ptr->word_recall == 1)
-	  {
-	    new_level_flag = TRUE;
-	    f_ptr->paralysis++;
-	    f_ptr->word_recall = 0;
-	    if (dun_level > 0)
-	      {
-		dun_level = 0;
-		msg_print("You feel yourself yanked upwards!");
-	      }
-	    else if (py.misc.max_dlv != 0)
-	      {
-		dun_level = py.misc.max_dlv;
-		msg_print("You feel yourself yanked downwards!");
-	      }
-	  }
-	else
-	  f_ptr->word_recall--;
+	{
+	  if (f_ptr->word_recall == 1)
+	    {
+	      new_level_flag = TRUE;
+	      f_ptr->paralysis++;
+	      f_ptr->word_recall = 0;
+	      if (dun_level > 0)
+		{
+		  dun_level = 0;
+		  msg_print("You feel yourself yanked upwards!");
+		}
+	      else if (py.misc.max_dlv != 0)
+		{
+		  dun_level = py.misc.max_dlv;
+		  msg_print("You feel yourself yanked downwards!");
+		}
+	    }
+	  else
+	    {
+	      f_ptr->word_recall--;
+	    }
+	}
 
       /* Random teleportation  */
       if ((py.flags.teleport) && (randint(100) == 1))

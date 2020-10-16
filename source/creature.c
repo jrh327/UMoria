@@ -1078,49 +1078,61 @@ int32u *rcmove;
 	    }
 	  /* Creature has attempted to move on player?	   */
 	  if (do_move)
-	    if (c_ptr->cptr == 1)
-	      {
-		/* if the monster is not lit, must call update_mon, it may
-		   be faster than character, and hence could have just
-		   moved next to character this same turn */
-		if (!m_ptr->ml)
-		  update_mon(monptr);
-		make_attack(monptr);
-		do_move = FALSE;
-		do_turn = TRUE;
-	      }
-	  /* Creature is attempting to move on other creature?	   */
-	    else if ((c_ptr->cptr > 1) &&
-		     ((newy != m_ptr->fy) ||
-		      (newx != m_ptr->fx)))
-	      {
-		/* Creature eats other creatures?	 */
+	    {
+	      if (c_ptr->cptr == 1)
+		{
+		  /* if the monster is not lit, must call update_mon, it may
+		     be faster than character, and hence could have just
+		     moved next to character this same turn */
+		  if (!m_ptr->ml)
+		    {
+		      update_mon(monptr);
+		    }
+		  make_attack(monptr);
+		  do_move = FALSE;
+		  do_turn = TRUE;
+		}
+	    /* Creature is attempting to move on other creature?	   */
+	      else if ((c_ptr->cptr > 1) &&
+		       ((newy != m_ptr->fy) ||
+		        (newx != m_ptr->fx)))
+		{
+		  /* Creature eats other creatures?	 */
 #ifdef ATARIST_MWC
-		if ((movebits & (holder = CM_EATS_OTHER)) &&
+		  if ((movebits & (holder = CM_EATS_OTHER)) &&
 #else
-		if ((movebits & CM_EATS_OTHER) &&
+		  if ((movebits & CM_EATS_OTHER) &&
 #endif
-		    (c_list[m_ptr->mptr].mexp >=
-		     c_list[m_list[c_ptr->cptr].mptr].mexp))
-		  {
-		    if (m_list[c_ptr->cptr].ml)
+		      (c_list[m_ptr->mptr].mexp >=
+		       c_list[m_list[c_ptr->cptr].mptr].mexp))
+		    {
+		      if (m_list[c_ptr->cptr].ml)
+			{
 #ifdef ATARIST_MWC
-		      *rcmove |= holder;
+			  *rcmove |= holder;
 #else
-		      *rcmove |= CM_EATS_OTHER;
+			  *rcmove |= CM_EATS_OTHER;
 #endif
+			}
 		    /* It ate an already processed monster. Handle normally. */
-		    if (monptr < c_ptr->cptr)
-		      delete_monster((int) c_ptr->cptr);
+		      if (monptr < c_ptr->cptr)
+			{
+			  delete_monster((int) c_ptr->cptr);
+			}
 		    /* If it eats this monster, an already processed monster
 		       will take its place, causing all kinds of havoc.  Delay
 		       the kill a bit. */
-		    else
-		      fix1_delete_monster((int) c_ptr->cptr);
-		  }
-		else
-		  do_move = FALSE;
-	      }
+		      else
+			{
+			  fix1_delete_monster((int) c_ptr->cptr);
+			}
+		    }
+		  else
+		    {
+		      do_move = FALSE;
+		    }
+		}
+	    }
 	  /* Creature has been allowed move.	 */
 	  if (do_move)
 	    {
@@ -1765,25 +1777,31 @@ int attack;
 			&& cave[m_ptr->fy][m_ptr->fx].fval >= MIN_CAVE_WALL))
 		  {
 		    if (m_ptr->csleep > 0)
-		      if (py.flags.aggravate)
-			m_ptr->csleep = 0;
-		      else if ((py.flags.rest == 0 && py.flags.paralysis < 1)
-			       || (randint(50) == 1))
-			{
-			  notice = randint(1024);
-			  if (notice*notice*notice <= (1L << (29 - py.misc.stl)))
-			    {
-			      m_ptr->csleep -= (100 / m_ptr->cdis);
-			      if (m_ptr->csleep > 0)
-				ignore = TRUE;
-			      else
-				{
-				  wake = TRUE;
-				  /* force it to be exactly zero */
-				  m_ptr->csleep = 0;
-				}
-			    }
-			}
+		      {
+			if (py.flags.aggravate)
+			  {
+			    m_ptr->csleep = 0;
+			  }
+			else if ((py.flags.rest == 0 && py.flags.paralysis < 1)
+				 || (randint(50) == 1))
+			  {
+			    notice = randint(1024);
+			    if (notice*notice*notice <= (1L << (29 - py.misc.stl)))
+			      {
+				m_ptr->csleep -= (100 / m_ptr->cdis);
+				if (m_ptr->csleep > 0)
+				  {
+				    ignore = TRUE;
+				  }
+				else
+				  {
+				    wake = TRUE;
+				    /* force it to be exactly zero */
+				    m_ptr->csleep = 0;
+				  }
+			      }
+			  }
+		      }
 		    if (m_ptr->stunned != 0)
 		      {
 			/* NOTE: Balrog = 100*100 = 10000, it always

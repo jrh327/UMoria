@@ -454,14 +454,16 @@ int32 price, minprice;
 
   s_ptr = &store[store_num];
   if (minprice > 9)
-    if (price == minprice)
-      {
-	if (s_ptr->good_buy < MAX_SHORT)
-	  s_ptr->good_buy++;
-      }
-    else
-      {
-	if (s_ptr->bad_buy < MAX_SHORT)
-	  s_ptr->bad_buy++;
-      }
+    {
+      if (price == minprice)
+	{
+	  if (s_ptr->good_buy < MAX_SHORT)
+	    s_ptr->good_buy++;
+	}
+      else
+	{
+	  if (s_ptr->bad_buy < MAX_SHORT)
+	    s_ptr->bad_buy++;
+	}
+    }
 }
