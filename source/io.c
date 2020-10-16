@@ -795,7 +795,7 @@ void shell_out()
       /* it is not open on MSDOS machines */
       (void) fclose(highscore_fp);
 #endif
-      if (str = getenv("SHELL"))
+      if ((str = getenv("SHELL")))
 #ifndef ATARI_ST
 	(void) execl(str, str, (char *) 0);
 #else

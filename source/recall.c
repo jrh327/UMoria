@@ -730,7 +730,7 @@ int mon_num;
       if (att_how > 19)
 	att_how = 0;
       roff(desc_amethod[att_how]);
-      if (att_type != 1 || d1 > 0 && d2 > 0)
+      if (att_type != 1 || (d1 > 0 && d2 > 0))
 	{
 	  roff(" to ");
 	  if (att_type > 24)
